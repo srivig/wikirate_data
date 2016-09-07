@@ -13,6 +13,7 @@ var barChart = function(opts){
   this.logScale = opts.logScale || false;
   this.xAxisLabel = opts.xAxisLabel || "";
   this.yAxisLabel = opts.yAxisLabel || "";
+  this.bins = opts.bins || 100;
 
   this.draw();
 }
@@ -20,8 +21,9 @@ var barChart = function(opts){
 var _barChart = barChart.prototype;
 
 _barChart.prepareHistogram = function(){
-  var b = this.binWidth;
-  this.units = dc.units.fp.precision(b);
+  this.minmax_extent =  d3.extent(this.allValues());
+  this.binWidth = (this.minmax_extent[1] - this.minmax_extent[0]) / this.bins;
+  this.units = dc.units.fp.precision(this.binWidth);
 }
 
 _barChart.getCrossfilterObj = function(){
@@ -43,47 +45,43 @@ _barChart.getDimension = function(){
   var _this = this;
   this.dimension  = cFilter.dimension(function (d)
                       {
-                        if(_this.histogram){
-                          _this.prepareHistogram();
-                          var b = _this.binWidth;
-                          d = d[Object.keys(d)]
-                          d = parseFloat(d);
-                          return b * Math.floor(d/b);
-                        }else{
-                          return d[Object.keys(d)];
-                        }
+                        return d[Object.keys(d)];
                       })
   return this.dimension;
 }
 
 _barChart.getGroup = function(){
   var dimension = this.getDimension();
-  this.group = dimension.group();
+  if(this.histogram){
+    this.prepareHistogram();
+    var b = this.binWidth;
+    this.group = dimension.group(function(d){
+      return b * Math.floor(parseFloat(d)/b);
+    })
+  }else{
+    this.group = dimension.group();
+  }
   return this.group;
 }
+
 
 _barChart.getDomainRange = function(){
   var group = this.getGroup();
   this.oridinal_values = d3.map(this.allValues(), function(d){return d;}).keys();
   this.minmax_occurrences = [0, group.top(1)[0].value];
-  this.minmax_value = d3.extent(this.allValues());
 }
 
 _barChart.setXY = function(){
   this.getDomainRange();
   if(this.histogram){
-    this.x = d3.scale.linear().domain(this.minmax_value);
+    this.x = d3.scale.linear().domain(this.minmax_extent).range([0, this.bins]);
   }else{
     this.x = d3.scale.ordinal().domain(this.oridinal_values);
   }
   this.y = d3.scale.linear().domain(this.minmax_occurrences);
   if (this.logScale) {
     //TODO: Finish log scale
-    // this.x = d3.scale.log().range(this.minmax_value);
-  this.x = d3.scale.log()
-    .domain([0, 1000])
-    .range([0, this.width]);
-  // this.units = dc.units.integers;
+    this.x = d3.scale.log(this.x)
   }
 }
 

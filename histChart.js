@@ -89,9 +89,9 @@ _histChart.drawBars = function(){
 
   this.bars.append('rect')
      .attr('x', function(d){ return x(d.x); } )
-     .attr('y', function(d){ return height - y(d.y); } )
-     .attr('width', function(d) { return d.dx*barWidthRatio; } )
-     .attr('height', function(d){ return y(d.y); } )
+     .attr('y', function(d){ return height - y(d.y); })
+     .attr('width', function(d) { return d.dx*barWidthRatio; })
+     .attr('height', function(d){ return y(d.y); })
      .attr('fill', barColor);
 }
 

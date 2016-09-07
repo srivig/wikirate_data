@@ -1,9 +1,9 @@
 var extractedData = JSON.parse(metricData.card.content)
 
 var valueData = [];
-var dataType = "numerical";
+var dataType = "numerical1";
 // var dataType = "categorical";
-var year = 2012;
+var year = 2014;
 
 var formattedValueData = [];
 var dcobj;
@@ -30,7 +30,7 @@ $(document).ready(function(){
                  paddingX: 10,
                  histogram: false,
                  width: 500,
-                 height: 300,
+                 height: 200,
                  barColors: ["#674ea7"],
                  yAxisLabel: "Frequency"
                };
@@ -38,7 +38,7 @@ $(document).ready(function(){
               //  opts.height = 100;
                dcobj = new barChart(opts);
                break
- case "numerical":
+ case "numerical1":
      for(var key in extractedData) {
                  if(extractedData.hasOwnProperty(key)) {
                   var val = parseFloat(extractedData[key][0].value)
@@ -52,9 +52,10 @@ $(document).ready(function(){
              }
              var opts = {
                data: formattedValueData,
+               binWidth: 1,
                paddingX: 10,
-               histogram: true,
-               logScale: true,
+               histogram: true ,
+               logScale: false,
                yAxisLabel: "Frequency"
              };
             //  opts.width = 1000;
@@ -71,7 +72,14 @@ $(document).ready(function(){
                   valueData.push(floatVal);
                }
            }
-           var opts = {data: valueData, bins: 10, barWidthRatio: 3, width: 500, height: 300, ordinal: true};
+           var opts = {
+               data: valueData,
+               bins: valueData.length,
+               barWidthRatio: 5,
+               width: 500,
+               height: 300,
+               ordinal: false
+           };
            cobj = new histChart(opts);
            break
    case "categorical2":
