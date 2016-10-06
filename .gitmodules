@@ -1,0 +1,6 @@
+[submodule "histd3"]
+	path = histd3
+	url = https://github.com/srivig/d3HistogramChart.git
+[submodule "histdc"]
+	path = histdc
+	url = https://github.com/srivig/dcBarChart.git

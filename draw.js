@@ -2,7 +2,7 @@ var extractedData = JSON.parse(metricData.card.content)
 
 var valueData = [];
 // var dataType = 'numerical2';
-var dataType = 'categorical2';
+var dataType = 'categorical';
 var year = 2014;
 
 var formattedValueData = [];
@@ -89,6 +89,15 @@ $(document).ready(function(){
                 valueData.push(val);
              }
          }
+         var opts = {
+             data: valueData,
+             bins: valueData.length,
+             barWidthRatio: 5,
+             width: 500,
+             height: 300,
+             ordinal: true
+         };
+         cobj = new histChart(opts);
          break
  }
 
